@@ -1,38 +1,42 @@
 #include<iostream>
-#include<cstdarg>
+#include<initializer_list>
 
-template<typename T, int N>
-class Array {
-    T m_array[N]; // creates on compile time based on usage
-
-public:
-    Array() {}
-    Array(T ...) {
-        va_list args;
-        va_start(args, N);
-
-        for (int i = 0; i < N; i++) {
-            m_array[i] = va_arg(args, T);
+template<typename T, size_t N>
+class MyArray {
+    T* m_array;
+    public:
+        MyArray(std::initializer_list<T> list)
+            : m_array(new T[N])   // initialize the pointer here
+        {
+            std::copy(list.begin(), list.end(), m_array);
         }
-        va_end(args);
-    }
 
-    T size() const { return N; }
-
-    void printArray() const {
-        for (unsigned int i = 0; i < N; i++) {
-            std::cout << m_array[i];
+        MyArray(const MyArray<T, N>& otherArray) : m_array(new T[N]) {
+            for (unsigned int i = 0; i < N; i++) {
+                m_array[i] = otherArray.m_array[i];
+            }
         }
-        std::cout << std::endl;
-    }
+
+        MyArray<T, N>& operator=(const MyArray<T, N>& otherArray) {
+            if (this == &otherArray)
+                return *this;
+            m_array = new T[N];
+            for (unsigned int i = 0; i < N; i++) {
+                m_array[i] = otherArray.m_array[i];
+            }
+            return *this;
+        }
+
+        ~MyArray() {
+            delete [] m_array;
+        }
+        T& operator[](std::size_t idx) { return m_array[idx]; }
+        const T& operator[](std::size_t idx) const { return m_array[idx]; }
 };
 
 int main() {
-    Array<int, 3> nums;
-    int a[] = {1,2};
-    Array<int, 2> nums2 = {1,2};
-
-    nums2.printArray();
-
+    MyArray<int, 3> arr = {1,2,3};
+    arr[0] = 20;
+    std::cout << arr[0] << std::endl;
     return 0;
 }

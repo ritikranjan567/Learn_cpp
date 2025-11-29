@@ -51,5 +51,6 @@
         "variant": "cpp",
         "cstring": "cpp",
         "cstdarg": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "E:/Learn_cpp/experiments"
 }
